@@ -11,11 +11,11 @@ Add this line to your application's Gemfile:
     gem "log-slf4j", :github => "tomcz/log-slf4j", :tag => "0.0.1"
     Note: the tag number should match the version of the gem.
 
-Unlike rjack-slf4j this gem does NOT bundle any SLF4J JARs so it is up to you to ensure that the `slf4j-api-XXX.jar` is present on the classpath along with a suitable implementation, such as `slf4j-simple-XXX.jar` or [Logback](http://logback.qos.ch/).
-
 And then execute:
 
     $ bundle
+
+NOTE: Unlike rjack-slf4j this gem does NOT bundle any SLF4J JARs so it is up to you to ensure that the `slf4j-api-XXX.jar` is present on the classpath along with a suitable implementation, such as `slf4j-simple-XXX.jar` or [Logback](http://logback.qos.ch/).
 
 ## Usage
 
