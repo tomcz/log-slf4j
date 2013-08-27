@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.description   = %q{Provides a ruby-compatible logger that delegates to SLF4J}
   gem.summary       = %q{Provides a ruby-compatible logger that delegates to SLF4J}
   gem.homepage      = 'https://github.com/tomcz/log-slf4j'
-  gem.license       = 'http://www.opensource.org/licenses/mit-license.php'
+  gem.license       = 'https://github.com/tomcz/log-slf4j/blob/master/LICENSE'
 
   gem.files = Dir['lib/**/*'] + ['README.md', 'LICENSE']
   gem.require_paths = ['lib']
