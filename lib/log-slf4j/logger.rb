@@ -132,13 +132,16 @@ module Log
       alias_method :fatal, :error
       alias_method :fatal?, :error?
 
-      # alias << to trace for Logger compatibility
-      alias_method :'<<', :trace
+      # alias << to debug for Logger compatibility
+      alias_method :'<<', :debug
 
       def add(severity, message = nil, progname = nil)
-        level = severity || 'trace'
+        level = severity || 'debug'
         level = level.downcase
-        level = 'trace' unless LEVELS.include?(level)
+
+        unless LEVELS.include?(level) || level == 'fatal'
+          level = 'debug'
+        end
 
         if self.send("#{level}?".to_sym)
           if message.nil?
