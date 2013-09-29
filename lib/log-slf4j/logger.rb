@@ -1,4 +1,5 @@
 require 'java'
+require 'logger'
 
 #
 # This code is adapted from https://raw.github.com/dekellum/rjack/dev/slf4j/lib/rjack-slf4j.rb
@@ -24,13 +25,21 @@ module Log
     # SLF4J severity levels
     LEVELS = %w{ trace debug info warn error }
 
+    RUBY_LOGGER_SEVERITY = {
+      ::Logger::Severity::DEBUG => 'debug',
+      ::Logger::Severity::INFO  => 'info',
+      ::Logger::Severity::WARN  => 'warn',
+      ::Logger::Severity::ERROR => 'error',
+      ::Logger::Severity::FATAL => 'fatal'
+    }
+
     # Return a java style class name, suitable as a logger name, from the
     # given ruby class or module, i.e:
     #
     #    to_log_name( Foo::Bar::Baz ) --> "foo.bar.Baz"
     #
-    def self.to_log_name( clz )
-      clz.name.gsub( /::/, '.' ).gsub( /([^\.]+)\./ ) { |m| m.downcase }
+    def self.to_log_name(clz)
+      clz.name.gsub(/::/, '.').gsub(/([^\.]+)\./) { |m| m.downcase }
     end
 
     class << self
@@ -79,9 +88,9 @@ module Log
       #
       # Which enables hierarchical level setting and abbreviation in some output adapters.
       #
-      def initialize( name )
-        @name = name.is_a?( Module ) ? SLF4J.to_log_name( name ) : name
-        @logger = org.slf4j.LoggerFactory.getLogger( @name )
+      def initialize(name)
+        @name = name.is_a?(Module) ? SLF4J.to_log_name(name) : name
+        @logger = org.slf4j.LoggerFactory.getLogger(@name)
       end
 
       # Return underlying org.slf4j.Logger
@@ -136,7 +145,7 @@ module Log
       alias_method :'<<', :debug
 
       def add(severity, message = nil, progname = nil)
-        level = severity || 'debug'
+        level = RUBY_LOGGER_SEVERITY[severity] || severity || 'debug'
         level = level.downcase
 
         unless LEVELS.include?(level) || level == 'fatal'
@@ -153,7 +162,7 @@ module Log
           self.send(level.to_sym, msg.join(' - ')) unless msg.empty?
         end
 
-        return true
+        true # always successful
       end
 
       # aliased for Logger compatibility
@@ -161,15 +170,15 @@ module Log
     end
 
     # Get Logger by name
-    def logger( name = self.class.name )
-      Logger.new( name )
+    def logger(name = self.class.name)
+      Logger.new(name)
     end
 
     module_function :logger
 
-    # Synonym for Logger.new( name )
-    def self.[]( name )
-      Logger.new( name )
+    # Synonym for Logger.new(name)
+    def self.[](name)
+      Logger.new(name)
     end
 
   end
