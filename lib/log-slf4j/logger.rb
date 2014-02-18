@@ -25,12 +25,12 @@ module Log
     # SLF4J severity levels
     LEVELS = %w{ trace debug info warn error }
 
-    RUBY_LOGGER_SEVERITY = {
-      ::Logger::Severity::DEBUG => 'debug',
-      ::Logger::Severity::INFO  => 'info',
-      ::Logger::Severity::WARN  => 'warn',
+    RUBY_LEVELS = {
+      ::Logger::Severity::FATAL => 'fatal',
       ::Logger::Severity::ERROR => 'error',
-      ::Logger::Severity::FATAL => 'fatal'
+      ::Logger::Severity::WARN  => 'warn',
+      ::Logger::Severity::INFO  => 'info',
+      ::Logger::Severity::DEBUG => 'debug'
     }
 
     # Return a java style class name, suitable as a logger name, from the
@@ -61,19 +61,21 @@ module Log
     #
     # These have the form (using _info_ as example):
     #
-    #   log = Logger.new( "name" )
-    #   log.info?                    # Is this level enabled for logging?
-    #   log.info( "message" )        # Log message
-    #   log.info { "message" }       # Execute block if enabled and log returned value
-    #   log.info( "message", ex )    # Log message with exception message/stack trace
-    #   log.info( ex ) { "message" } # Log message with exception message/stack trace
-    #   log.info( ex )               # Log exception with default "Exception:" message
+    #   log = Logger.new("name")
+    #   log.info?                  # Is this level enabled for logging?
+    #   log.info("message")        # Log message
+    #   log.info {"message"}       # Execute block if enabled
+    #                                and log returned value
+    #   log.info("message", ex)    # Log message with exception message/stack trace
+    #   log.info(ex) { "message" } # Log message with exception message/stack trace
+    #   log.info(ex)               # Log exception with default "Exception:" message
     #
     # Note that the exception variants are aware of JRuby's
     # NativeException class (a wrapped java exception) and will log
     # using the Java ex.cause in this case.
     #
     class Logger
+      attr_accessor :level
       attr_reader :name
 
       # Create new or find existing Logger by name. If name is a Module (Class, etc.)
@@ -91,6 +93,7 @@ module Log
       def initialize(name)
         @name = name.is_a?(Module) ? SLF4J.to_log_name(name) : name
         @logger = org.slf4j.LoggerFactory.getLogger(@name)
+        @level = ::Logger::Severity::INFO
       end
 
       # Return underlying org.slf4j.Logger
@@ -141,16 +144,13 @@ module Log
       alias_method :fatal, :error
       alias_method :fatal?, :error?
 
-      # alias << to debug for Logger compatibility
-      alias_method :'<<', :debug
+      def <<(msg)
+        add @level, msg
+      end
 
       def add(severity, message = nil, progname = nil)
-        level = RUBY_LOGGER_SEVERITY[severity] || severity || 'debug'
-        level = level.downcase
-
-        unless LEVELS.include?(level) || level == 'fatal'
-          level = 'debug'
-        end
+        level = (RUBY_LEVELS[severity] || severity || 'trace').downcase
+        level = 'trace' unless self.respond_to?("#{level}?".to_sym)
 
         if self.send("#{level}?".to_sym)
           if message.nil?
@@ -162,7 +162,7 @@ module Log
           self.send(level.to_sym, msg.join(' - ')) unless msg.empty?
         end
 
-        true # always successful
+        return true
       end
 
       # aliased for Logger compatibility
