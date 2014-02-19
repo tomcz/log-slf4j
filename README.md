@@ -2,7 +2,7 @@
 
 Provides a jruby-compatible logger and Rails logger replacement that delegates to [SLF4J](http://www.slf4j.org/).
 
-This gem is adapted from [rjack-slf4j](https://github.com/dekellum/rjack) by David Kellum in order to remove selection and bundling of SLF4J JARs. When loaded by a [Warbler](https://github.com/jruby/warbler)-bundled jruby application multiple implementations of SLF4J are found on the classpath and SLF4J is unable to pick one.
+This gem is adapted from [rjack-slf4j](https://github.com/dekellum/rjack) by David Kellum in order to remove selection and bundling of SLF4J JARs. When the original gem is loaded by a [Warbler](https://github.com/jruby/warbler)-bundled jruby application multiple implementations of SLF4J are found on the classpath and SLF4J is unable to pick one.
 
 ## Installation
 
