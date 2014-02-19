@@ -14,7 +14,7 @@ module Log
   #
   #   require 'log-slf4j'
   #
-  #   log = Log::SLF4J[ "my.app.logger" ]
+  #   log = Log::SLF4J["my.app.logger"]
   #   log.info "Hello World!"
   #
   #   // In application.rb, environment file, or initializer
@@ -36,7 +36,7 @@ module Log
     # Return a java style class name, suitable as a logger name, from the
     # given ruby class or module, i.e:
     #
-    #    to_log_name( Foo::Bar::Baz ) --> "foo.bar.Baz"
+    #    to_log_name(Foo::Bar::Baz) --> "foo.bar.Baz"
     #
     def self.to_log_name(clz)
       clz.name.gsub(/::/, '.').gsub(/([^\.]+)\./) { |m| m.downcase }
@@ -78,7 +78,7 @@ module Log
       attr_reader :name
 
       # Create new or find existing Logger by name. If name is a Module (Class, etc.)
-      # then use SLF4J.to_log_name( name ) as the name
+      # then use SLF4J.to_log_name(name) as the name
       #
       # Note that loggers are arranged in a hiearchy by dot '.' name
       # notation using java package/class name conventions:
@@ -148,7 +148,7 @@ module Log
       end
 
       def add(severity, message = nil, progname = nil)
-        level = (RUBY_LEVELS[severity] || severity.to_s || 'trace').downcase
+        level = (RUBY_LEVELS[severity] || severity || 'trace').downcase
         level = 'trace' unless self.respond_to?("#{level}?".to_sym)
 
         if self.send("#{level}?".to_sym)
