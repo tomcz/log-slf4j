@@ -64,8 +64,7 @@ module Log
     #   log = Logger.new("name")
     #   log.info?                  # Is this level enabled for logging?
     #   log.info("message")        # Log message
-    #   log.info {"message"}       # Execute block if enabled
-    #                                and log returned value
+    #   log.info { "message" }     # Execute block if enabled and log returned value
     #   log.info("message", ex)    # Log message with exception message/stack trace
     #   log.info(ex) { "message" } # Log message with exception message/stack trace
     #   log.info(ex)               # Log exception with default "Exception:" message
