@@ -148,7 +148,7 @@ module Log
       end
 
       def add(severity, message = nil, progname = nil)
-        level = (RUBY_LEVELS[severity] || severity || 'trace').downcase
+        level = (RUBY_LEVELS[severity] || severity.to_s || 'trace').downcase
         level = 'trace' unless self.respond_to?("#{level}?".to_sym)
 
         if self.send("#{level}?".to_sym)
